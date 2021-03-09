@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"regexp"
 	"strings"
 
-	"github.com/gocolly/colly/v2"
 	"github.com/manifoldco/promptui"
 	"github.com/tidwall/gjson"
 )
@@ -44,30 +46,33 @@ func main() {
 }
 
 func scrapeData() (string, error) {
-	var (
-		finalJSON string
-		err       error
-	)
-	c := colly.NewCollector()
+	req, err := http.NewRequest(http.MethodGet, "https://e.infogram.com/81277d3a-5813-46f7-a270-79d1768a70b2", nil)
+	if err != nil {
+		return "", err
+	}
 
-	c.OnHTML("script", func(e *colly.HTMLElement) {
-		if strings.Contains(e.Text, "window.infographicData") {
-			finalJSON, err = parseData(e.Text)
-		}
-	})
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
 
-	c.OnError(func(r *colly.Response, err error) {
-		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
-	})
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-	c.Visit("https://e.infogram.com/81277d3a-5813-46f7-a270-79d1768a70b2")
-	return finalJSON, err
+	regex := regexp.MustCompile(`window.infographicData(.*)`)
+
+	foundStr := regex.FindAllString(string(body), -1)[0]
+	return parseData(foundStr)
 }
 
 func parseData(text string) (string, error) {
 	str := strings.Trim(text, "window.infographicData=")
-	str = strings.TrimRight(str, ";")
+	str = strings.TrimRight(str, ";</script>")
 	if !json.Valid([]byte(str)) {
+		log.Println(str)
 		return "", fmt.Errorf("invalid json format")
 	}
 
