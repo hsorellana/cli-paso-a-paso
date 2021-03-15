@@ -1,15 +1,17 @@
-on: release
-name: Build Release
+on: 
+  release:
+    types: [created]
+
 jobs:
   releases-matrix:
-    name: release darwin/amd64
+    name: Release Go Binary
     runs-on: ubuntu-latest
     strategy:
       matrix:
         goos: [darwin]
         goarch: [amd64]
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: compile and release
       uses: wangyoucao577/go-release-action@v1.14
       env:
