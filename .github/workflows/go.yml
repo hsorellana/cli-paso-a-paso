@@ -1,21 +1,32 @@
 on: release
 name: Build Release
 jobs:
-  releases-matrix:
+  release-darwin-amd64:
     name: release darwin/amd64
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # build and publish in parallel: linux/amd64, darwin/amd64 
-        goos: [linux, darwin]
-        goarch: [amd64]
     steps:
     - uses: actions/checkout@master
     - name: compile and release
-      uses: wangyoucao577/go-release-action@v1.14
+      uses: ngs/go-release.action@v1.0.1
       env:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
-        binary_name: "cli-paso-a-paso"
-        goversion: https://golang.org/dl/go1.15.10.linux-amd64.tar.gz
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GOARCH: amd64
+        GOOS: darwin
+  # releases-matrix:
+  #   name: release darwin/amd64
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       # build and publish in parallel: linux/amd64, darwin/amd64 
+  #       goos: [linux, darwin]
+  #       goarch: [amd64]
+  #   steps:
+  #   - uses: actions/checkout@master
+  #   - name: compile and release
+  #     uses: wangyoucao577/go-release-action@v1.14
+  #     env:
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
+  #       goos: ${{ matrix.goos }}
+  #       goarch: ${{ matrix.goarch }}
+  #       binary_name: "cli-paso-a-paso"
+  #       goversion: https://golang.org/dl/go1.15.10.linux-amd64.tar.gz
