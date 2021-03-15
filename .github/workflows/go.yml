@@ -1,0 +1,20 @@
+on: release
+name: Build Release
+jobs:
+  releases-matrix:
+    name: release darwin/amd64
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # build and publish in parallel: linux/amd64, darwin/amd64 
+        goos: [linux, darwin]
+        goarch: [amd64]
+    steps:
+    - uses: actions/checkout@master
+    - name: compile and release
+      uses: wangyoucao577/go-release-action@v1.14
+      env:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        binary_name: "cli-paso-a-paso"
