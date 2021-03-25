@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Fetching recent data...")
+	fmt.Println("Obteniendo info de comunas...")
 	data, err := scrapeData()
 	if err != nil {
 		log.Fatalln(err)
