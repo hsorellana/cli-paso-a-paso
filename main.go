@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	input = strings.Trim(input, "\n")
+	input = strings.ToLower(strings.Trim(input, "\n"))
 
 	results := make([]string, 0, len(mappedData))
 	for commune := range mappedData {
