@@ -69,7 +69,7 @@ func scrapeData() (string, error) {
 }
 
 func parseData(text string) (string, error) {
-	str := strings.Trim(text, "window.infographicData=")
+	str := strings.TrimPrefix(text, "window.infographicData=")
 	str = strings.TrimRight(str, ";</script>")
 	if !json.Valid([]byte(str)) {
 		log.Println(str)
